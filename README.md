@@ -9,4 +9,4 @@ base on Python3
 Run the UmaProject.bat and visit http://localhost:8000
 
 
-plz put your videos folder in UmaProject folder
+plz put your video folder in UmaProject folder
