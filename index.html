@@ -250,9 +250,11 @@
         .video-player.active {
             display: block;
         }
-        video {
+        .video-player video {
+            display: block;
             width: 100%;
             max-width: 1000px;
+            margin: 0 auto;
             border-radius: 4px;
         }
         .player-controls {
@@ -261,6 +263,9 @@
             flex-wrap: wrap;
             gap: 10px;
             align-items: center;
+            max-width: 1000px;
+            margin-left: auto;
+            margin-right: auto;
         }
         button {
             padding: 8px 15px;
@@ -280,6 +285,9 @@
             background: var(--tag-filter-bg);
             border-radius: 6px;
             transition: background-color 0.3s ease;
+            max-width: 1000px;
+            margin-left: auto;
+            margin-right: auto;
         }
         .tag-editor input {
             padding: 5px 10px;
@@ -380,6 +388,27 @@
             margin-top: 5px;
             font-style: italic;
         }
+        .loop-toggle {
+            padding: 6px 12px;
+            background: var(--tag-bg);
+            color: var(--tag-color);
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.2s;
+        }
+        .loop-toggle:hover {
+            opacity: 0.9;
+            transform: scale(1.05);
+        }
+        .loop-toggle.active {
+            background: var(--tag-active-bg);
+            color: var(--tag-active-color);
+        }
     </style>
 </head>
 <body>
@@ -412,6 +441,7 @@
             <div class="player-controls">
                 <button id="close-player">关闭播放</button>
                 <button id="random-play">🎲 随机播放</button>
+                <button id="loop-toggle" class="loop-toggle" title="点击切换：单曲循环 / 列表循环 / 关闭循环">🔁 循环</button>
                 <span id="current-video-path" class="current-video-path" style="margin-left: 10px;"></span>
             </div>
             <!-- 标签编辑区域 -->
@@ -448,14 +478,17 @@
         let allVideos = [];
         let activeTag = 'all';
         let currentVideoIndex = -1;
+        let loopMode = 'off'; // 循环模式：'off'(关闭), 'single'(单曲循环), 'list'(列表循环)
         const LOCAL_STORAGE_KEY = 'video_tags_data'; // 用于存储标签的localStorage键名
         const THUMBNAIL_STORAGE_KEY = 'video_thumbnails_data'; // 用于存储缩略图的localStorage键名
         const THEME_STORAGE_KEY = 'video_player_theme'; // 用于存储主题偏好的localStorage键名
+        const LOOP_MODE_STORAGE_KEY = 'video_player_loop_mode'; // 用于存储循环模式偏好的localStorage键名
 
         // 页面加载完成后初始化
         window.addEventListener('DOMContentLoaded', () => {
             initTheme(); // 初始化主题
             initRating(); // 初始化评分功能
+            initLoopMode(); // 初始化循环模式
             loadVideos(); // 加载视频
         });
 
@@ -706,6 +739,16 @@
             const currentRating = getVideoRating(video);
             updateRatingDisplay(currentRating);
             
+            // 根据循环模式设置视频的loop属性
+            if (loopMode === 'single') {
+                player.loop = true;
+            } else {
+                player.loop = false;
+            }
+            
+            // 绑定视频结束事件（用于列表循环）
+            player.onended = handleVideoEnded;
+            
             // 快进失败时重试
             player.onerror = function() {
                 const errorMsg = `播放失败！可能原因：\n1. 视频不在服务器范围内\n2. 编码不支持（建议转MP4）\n3. 路径错误：${video.server_path}`;
@@ -788,6 +831,97 @@
         // 绑定随机播放按钮事件（播放器内和页面顶部）
         document.getElementById('random-play').addEventListener('click', playRandomVideo);
         document.getElementById('random-play-main').addEventListener('click', playRandomVideo);
+
+        // 初始化循环模式
+        function initLoopMode() {
+            // 从localStorage加载保存的循环模式
+            const savedMode = localStorage.getItem(LOOP_MODE_STORAGE_KEY) || 'off';
+            setLoopMode(savedMode);
+            
+            // 绑定循环按钮点击事件
+            document.getElementById('loop-toggle').addEventListener('click', toggleLoopMode);
+        }
+
+        // 切换循环模式（关闭 -> 单曲循环 -> 列表循环 -> 关闭）
+        function toggleLoopMode() {
+            const modes = ['off', 'single', 'list'];
+            const currentIndex = modes.indexOf(loopMode);
+            const nextIndex = (currentIndex + 1) % modes.length;
+            setLoopMode(modes[nextIndex]);
+        }
+
+        // 设置循环模式
+        function setLoopMode(mode) {
+            loopMode = mode;
+            const loopButton = document.getElementById('loop-toggle');
+            
+            // 更新按钮显示和状态
+            if (mode === 'off') {
+                loopButton.textContent = '🔁 循环';
+                loopButton.classList.remove('active');
+                loopButton.title = '点击开启循环播放（单曲循环）';
+            } else if (mode === 'single') {
+                loopButton.textContent = '🔁 单曲循环';
+                loopButton.classList.add('active');
+                loopButton.title = '点击切换为列表循环';
+            } else if (mode === 'list') {
+                loopButton.textContent = '🔂 列表循环';
+                loopButton.classList.add('active');
+                loopButton.title = '点击关闭循环播放';
+            }
+            
+            // 更新当前播放器的loop属性
+            const player = document.getElementById('player');
+            if (player) {
+                if (mode === 'single') {
+                    player.loop = true;
+                } else {
+                    player.loop = false;
+                }
+            }
+            
+            // 保存到localStorage
+            localStorage.setItem(LOOP_MODE_STORAGE_KEY, mode);
+        }
+
+        // 处理视频播放结束事件（用于列表循环）
+        function handleVideoEnded() {
+            // 单曲循环模式：video元素的loop属性会自动处理
+            if (loopMode === 'single') {
+                return;
+            }
+            
+            // 列表循环模式：播放完当前视频后自动播放列表中的下一个
+            if (loopMode === 'list') {
+                const filteredVideos = getFilteredVideos();
+                if (filteredVideos.length === 0) {
+                    return;
+                }
+                
+                // 找到当前视频在筛选列表中的位置
+                const currentVideo = allVideos[currentVideoIndex];
+                const currentFilteredIndex = filteredVideos.findIndex(
+                    v => v.server_path === currentVideo.server_path
+                );
+                
+                // 播放下一个视频（如果是最后一个则从第一个重新开始）
+                const nextIndex = (currentFilteredIndex + 1) % filteredVideos.length;
+                const nextVideo = filteredVideos[nextIndex];
+                
+                if (nextVideo) {
+                    currentVideoIndex = allVideos.findIndex(v => v.server_path === nextVideo.server_path);
+                    openPlayer(nextVideo);
+                    
+                    // 自动播放
+                    const player = document.getElementById('player');
+                    setTimeout(() => {
+                        player.play().catch(err => {
+                            console.warn('自动播放失败，可能需要用户交互:', err);
+                        });
+                    }, 300);
+                }
+            }
+        }
 
         // 初始化评分功能
         function initRating() {

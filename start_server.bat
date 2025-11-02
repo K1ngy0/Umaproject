@@ -5,7 +5,9 @@ echo Closing the window will stop the server.
 
 python start_server_with_range.py
 
-timeout /t 1 
 
+
+
+timeout /t 1 
 
 pause
