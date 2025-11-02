@@ -72,6 +72,7 @@ if exist "%json_file%" (
     if %errorlevel% equ 0 (
         echo ==============================================
         echo %py_script%执行完成
+        call "%server_bat%"
     ) else (
         echo ==============================================
         echo %py_script%执行失败，错误代码：%errorlevel%

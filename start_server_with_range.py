@@ -49,8 +49,8 @@ if __name__ == '__main__':
     server_address = (host, port)
     httpd = http.server.HTTPServer(server_address, RangeHTTPRequestHandler)
     print(f"支持范围请求的服务器已启动")
-    print(f"访问地址：http://localhost:{port}/windows_video_player.html")
-    print(f"按 Ctrl+C 停止服务器")
+    print(f"访问地址：http://localhost:{port}/index.html")
+    print(f"按 Ctrl+C/关闭窗口 停止服务器")
     try:
         httpd.serve_forever()
     except KeyboardInterrupt:

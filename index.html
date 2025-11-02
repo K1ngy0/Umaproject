@@ -10,11 +10,52 @@
             margin: 0;
             padding: 0;
         }
+        
+        /* CSS变量定义 */
+        :root {
+            --bg-color: #f5f5f5;
+            --text-color: #333;
+            --card-bg: white;
+            --card-shadow: rgba(0,0,0,0.1);
+            --input-bg: white;
+            --input-border: #ddd;
+            --tag-filter-bg: white;
+            --tag-bg: #e8f4fd;
+            --tag-color: #0078d7;
+            --tag-active-bg: #0078d7;
+            --tag-active-color: white;
+            --video-tag-bg: #f0f0f0;
+            --video-tag-color: #333;
+            --stats-color: #666;
+            --player-bg: #fff;
+        }
+        
+        /* 暗色主题 */
+        [data-theme="dark"] {
+            --bg-color: #1a1a1a;
+            --text-color: #e0e0e0;
+            --card-bg: #2d2d2d;
+            --card-shadow: rgba(0,0,0,0.5);
+            --input-bg: #3a3a3a;
+            --input-border: #555;
+            --tag-filter-bg: #2d2d2d;
+            --tag-bg: #3a4a5a;
+            --tag-color: #5fa8f5;
+            --tag-active-bg: #0078d7;
+            --tag-active-color: white;
+            --video-tag-bg: #3a3a3a;
+            --video-tag-color: #e0e0e0;
+            --stats-color: #aaa;
+            --player-bg: #2d2d2d;
+        }
+        
         body {
             font-family: "微软雅黑", Arial, sans-serif;
-            background-color: #f5f5f5;
+            background-color: var(--bg-color);
+            color: var(--text-color);
             padding: 20px;
             line-height: 1.6;
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
         .container {
             max-width: 1200px;
@@ -38,9 +79,33 @@
         #search-input {
             width: 100%;
             padding: 10px 15px;
-            border: 2px solid #ddd;
+            border: 2px solid var(--input-border);
             border-radius: 4px;
             font-size: 16px;
+            background-color: var(--input-bg);
+            color: var(--text-color);
+            transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+        }
+        #search-input:focus {
+            outline: none;
+            border-color: #0078d7;
+        }
+        .theme-toggle {
+            padding: 8px 15px;
+            background: var(--tag-bg);
+            color: var(--tag-color);
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.2s;
+        }
+        .theme-toggle:hover {
+            opacity: 0.9;
+            transform: scale(1.05);
         }
         .tag-filter {
             display: flex;
@@ -48,13 +113,14 @@
             gap: 8px;
             margin-bottom: 20px;
             padding: 10px;
-            background: white;
+            background: var(--tag-filter-bg);
             border-radius: 6px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            box-shadow: 0 1px 3px var(--card-shadow);
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
         }
         .tag-item {
-            background: #e8f4fd;
-            color: #0078d7;
+            background: var(--tag-bg);
+            color: var(--tag-color);
             padding: 4px 10px;
             border-radius: 12px;
             font-size: 14px;
@@ -62,8 +128,8 @@
             transition: all 0.2s;
         }
         .tag-item.active {
-            background: #0078d7;
-            color: white;
+            background: var(--tag-active-bg);
+            color: var(--tag-active-color);
         }
         .tag-item:hover {
             opacity: 0.9;
@@ -76,11 +142,11 @@
             margin-bottom: 30px;
         }
         .video-card {
-            background: white;
+            background: var(--card-bg);
             border-radius: 8px;
             overflow: hidden;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            transition: transform 0.3s ease;
+            box-shadow: 0 2px 8px var(--card-shadow);
+            transition: transform 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease;
             cursor: pointer;
         }
         .video-card:hover {
@@ -94,6 +160,20 @@
             justify-content: center;
             color: white;
             position: relative;
+            overflow: hidden;
+        }
+        .video-thumbnail img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: none;
+        }
+        .video-thumbnail img.loaded {
+            display: block;
+        }
+        .video-thumbnail .loading-text {
+            position: absolute;
+            z-index: 1;
         }
         .video-thumbnail .ext {
             position: absolute;
@@ -103,6 +183,7 @@
             padding: 2px 5px;
             border-radius: 3px;
             font-size: 12px;
+            z-index: 2;
         }
         .video-info {
             padding: 10px;
@@ -113,10 +194,11 @@
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+            color: var(--text-color);
         }
         .video-path {
             font-size: 12px;
-            color: #666;
+            color: var(--stats-color);
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -129,14 +211,15 @@
             margin-top: 5px;
         }
         .video-tag {
-            background: #f0f0f0;
-            color: #333;
+            background: var(--video-tag-bg);
+            color: var(--video-tag-color);
             padding: 2px 6px;
             border-radius: 4px;
             font-size: 12px;
             display: inline-flex;
             align-items: center;
             gap: 4px;
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
         .video-tag .remove-tag {
             color: #e50000;
@@ -158,10 +241,11 @@
         .video-player {
             display: none;
             margin-bottom: 30px;
-            background: #fff;
+            background: var(--player-bg);
             padding: 20px;
             border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 10px var(--card-shadow);
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
         }
         .video-player.active {
             display: block;
@@ -193,14 +277,73 @@
         .tag-editor {
             margin-top: 10px;
             padding: 10px;
-            background: #f9f9f9;
+            background: var(--tag-filter-bg);
             border-radius: 6px;
+            transition: background-color 0.3s ease;
         }
         .tag-editor input {
             padding: 5px 10px;
-            border: 1px solid #ddd;
+            border: 1px solid var(--input-border);
             border-radius: 4px;
             margin-right: 5px;
+            background-color: var(--input-bg);
+            color: var(--text-color);
+            transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+        }
+        .tag-editor input:focus {
+            outline: none;
+            border-color: #0078d7;
+        }
+        .tag-editor h4 {
+            color: var(--text-color);
+            transition: color 0.3s ease;
+            margin-bottom: 10px;
+        }
+        .rating-section {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid var(--input-border);
+        }
+        .rating-label {
+            color: var(--text-color);
+            margin-bottom: 8px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+        .star-rating {
+            display: flex;
+            gap: 5px;
+            align-items: center;
+        }
+        .star {
+            font-size: 28px;
+            color: #ddd;
+            cursor: pointer;
+            transition: all 0.2s;
+            user-select: none;
+        }
+        .star:hover {
+            transform: scale(1.1);
+        }
+        .star.active {
+            color: #ffd700;
+            text-shadow: 0 0 8px rgba(255, 215, 0, 0.5);
+        }
+        .star.hover {
+            color: #ffed4e;
+        }
+        .rating-display {
+            display: inline-flex;
+            gap: 2px;
+            align-items: center;
+            font-size: 14px;
+        }
+        .rating-display .star-small {
+            font-size: 14px;
+            color: #ffd700;
+        }
+        .rating-display .star-empty {
+            color: #ddd;
         }
         .loading {
             text-align: center;
@@ -215,7 +358,12 @@
         .stats {
             margin-bottom: 20px;
             text-align: center;
-            color: #666;
+            color: var(--stats-color);
+            transition: color 0.3s ease;
+        }
+        .current-video-path {
+            color: var(--stats-color);
+            transition: color 0.3s ease;
         }
         .server-guide {
             background: #fff;
@@ -237,7 +385,7 @@
 <body>
     <div class="container">
         <header>
-            <h1>UmaProject 本地视频浏览器（带标签功能）</h1>
+            <h1>UmaProject LVWP</h1>
             <p class="stats">正在加载视频列表...</p>
         </header>
         
@@ -245,6 +393,13 @@
             <div class="search-bar">
                 <input type="text" id="search-input" placeholder="搜索视频文件名、路径或标签...">
             </div>
+            <button id="random-play-main" class="theme-toggle" title="随机播放视频">
+                🎲 随机播放
+            </button>
+            <button class="theme-toggle" id="theme-toggle" title="切换主题">
+                <span id="theme-icon">🌙</span>
+                <span id="theme-text">黑夜模式</span>
+            </button>
         </div>
         
         <div class="tag-filter" id="tag-filter">
@@ -256,7 +411,8 @@
             <video id="player" controls preload="metadata"></video>
             <div class="player-controls">
                 <button id="close-player">关闭播放</button>
-                <span id="current-video-path" style="margin-left: 10px; color: #666;"></span>
+                <button id="random-play">🎲 随机播放</button>
+                <span id="current-video-path" class="current-video-path" style="margin-left: 10px;"></span>
             </div>
             <!-- 标签编辑区域 -->
             <div class="tag-editor">
@@ -265,6 +421,19 @@
                 <button id="save-tags">保存标签</button>
                 <p id="current-tags-display" style="margin-top: 5px; font-size: 14px;">当前标签：无</p>
                 <p class="storage-note">标签会保存在本地，刷新网页不会丢失。点击标签后的×可删除</p>
+                
+                <!-- 评分区域 -->
+                <div class="rating-section">
+                    <div class="rating-label">视频评分：</div>
+                    <div class="star-rating" id="star-rating">
+                        <span class="star" data-rating="1">★</span>
+                        <span class="star" data-rating="2">★</span>
+                        <span class="star" data-rating="3">★</span>
+                        <span class="star" data-rating="4">★</span>
+                        <span class="star" data-rating="5">★</span>
+                        <span id="rating-text" style="margin-left: 10px; color: var(--stats-color); font-size: 14px;">未评分</span>
+                    </div>
+                </div>
             </div>
         </div>
         
@@ -272,58 +441,7 @@
             <!-- 视频卡片将通过JS动态生成 -->
         </div>
         
-        <div class="server-guide">
-            <h4>本地服务器指南（支持视频快进）：</h4>
-            <p>1. 创建支持范围请求的服务器脚本（start_server_with_range.py）：</p>
-            <pre>import http.server
-import os
-from http import HTTPStatus
-
-class RangeHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
-    def send_head(self):
-        path = self.translate_path(self.path)
-        f = None
-        if os.path.isdir(path):
-            return super().send_head()
-        try:
-            f = open(path, 'rb')
-        except OSError:
-            self.send_error(HTTPStatus.NOT_FOUND, "File not found")
-            return None
-        
-        range_header = self.headers.get('Range')
-        if range_header:
-            range_str = range_header.split('=')[-1]
-            start_str, end_str = range_str.split('-')
-            start = int(start_str) if start_str else 0
-            f.seek(0, os.SEEK_END)
-            file_size = f.tell()
-            end = int(end_str) if end_str else file_size - 1
-            end = min(end, file_size - 1)
-            
-            self.send_response(HTTPStatus.PARTIAL_CONTENT)
-            self.send_header('Content-Type', self.guess_type(path))
-            self.send_header('Content-Range', f'bytes {start}-{end}/{file_size}')
-            self.send_header('Content-Length', str(end - start + 1))
-            self.send_header('Last-Modified', self.date_time_string(os.path.getmtime(path)))
-            self.end_headers()
-            
-            f.seek(start)
-            return f
-        else:
-            return super().send_head()
-
-if __name__ == '__main__':
-    host = '0.0.0.0'
-    port = 8000
-    server_address = (host, port)
-    httpd = http.server.HTTPServer(server_address, RangeHTTPRequestHandler)
-    print(f"服务器启动：http://localhost:{port}")
-    httpd.serve_forever()</pre>
-            <p>2. 启动服务器：<code>python start_server_with_range.py</code></p>
-            <p>3. 访问：<strong>http://localhost:8000/windows_video_player.html</strong></p>
-        </div>
-    </div>
+       
 
     <script>
         // 全局变量
@@ -331,9 +449,15 @@ if __name__ == '__main__':
         let activeTag = 'all';
         let currentVideoIndex = -1;
         const LOCAL_STORAGE_KEY = 'video_tags_data'; // 用于存储标签的localStorage键名
+        const THUMBNAIL_STORAGE_KEY = 'video_thumbnails_data'; // 用于存储缩略图的localStorage键名
+        const THEME_STORAGE_KEY = 'video_player_theme'; // 用于存储主题偏好的localStorage键名
 
         // 页面加载完成后初始化
-        window.addEventListener('DOMContentLoaded', loadVideos);
+        window.addEventListener('DOMContentLoaded', () => {
+            initTheme(); // 初始化主题
+            initRating(); // 初始化评分功能
+            loadVideos(); // 加载视频
+        });
 
         // 加载视频数据并合并本地存储的标签
         async function loadVideos() {
@@ -375,9 +499,13 @@ if __name__ == '__main__':
             const tagFilter = document.getElementById('tag-filter');
             const allTags = new Set();
             
-            // 收集所有视频的标签（去重）
+            // 收集所有视频的标签（去重，排除评分标签）
             allVideos.forEach(video => {
-                video.tags.forEach(tag => allTags.add(tag));
+                video.tags.forEach(tag => {
+                    if (!tag.startsWith('rating-')) {
+                        allTags.add(tag);
+                    }
+                });
             });
             
             // 清空现有标签（保留"全部视频"）
@@ -445,24 +573,36 @@ if __name__ == '__main__':
                 const card = document.createElement('div');
                 card.className = 'video-card';
                 
-                // 生成带删除按钮的标签HTML
-                const tagsHtml = video.tags.length 
-                    ? video.tags.map(tag => `
+                // 生成带删除按钮的标签HTML（排除评分标签）
+                const nonRatingTags = video.tags.filter(tag => !tag.startsWith('rating-'));
+                const tagsHtml = nonRatingTags.length 
+                    ? nonRatingTags.map(tag => `
                         <span class="video-tag">
                             ${tag}
                             <span class="remove-tag" data-video-path="${video.server_path}" data-tag="${tag}">×</span>
                         </span>
                     `).join('')
-                    : '<span class="video-tag" style="color:#999;">无标签</span>';
+                    : '<span class="video-tag" style="opacity:0.6;">无标签</span>';
+                
+                // 获取并显示评分
+                const rating = getVideoRating(video);
+                const ratingDisplay = rating > 0 
+                    ? `<div class="rating-display" style="margin-top: 5px;">
+                        ${'★'.repeat(rating)}${'☆'.repeat(5 - rating)}
+                        <span style="margin-left: 5px; font-size: 12px; color: var(--stats-color);">${rating}星</span>
+                    </div>`
+                    : '';
                 
                 card.innerHTML = `
                     <div class="video-thumbnail">
-                        <span>📹 视频文件</span>
+                        <span class="loading-text">📹 加载中...</span>
+                        <img class="thumbnail-img" data-video-path="${video.server_path}" alt="${video.filename}" />
                         <span class="ext">${video.extension}</span>
                     </div>
                     <div class="video-info">
                         <div class="video-title">${video.filename}</div>
                         <div class="video-path">${video.server_path || video.full_path}</div>
+                        ${ratingDisplay}
                         <div class="video-tags">${tagsHtml}</div>
                     </div>
                 `;
@@ -477,6 +617,9 @@ if __name__ == '__main__':
                 });
                 
                 grid.appendChild(card);
+                
+                // 异步加载缩略图
+                loadVideoThumbnail(video, card.querySelector('.thumbnail-img'));
             });
             
             // 绑定标签删除事件（视频卡片中的标签）
@@ -490,6 +633,37 @@ if __name__ == '__main__':
             });
         }
 
+        // 获取视频的评分（从标签中提取）
+        function getVideoRating(video) {
+            const ratingTag = video.tags.find(tag => tag.startsWith('rating-'));
+            if (ratingTag) {
+                const rating = parseInt(ratingTag.replace('rating-', ''));
+                return rating;
+            }
+            return 0;
+        }
+
+        // 更新评分显示
+        function updateRatingDisplay(rating) {
+            const stars = document.querySelectorAll('.star');
+            const ratingText = document.getElementById('rating-text');
+            
+            stars.forEach((star, index) => {
+                const starRating = index + 1;
+                if (starRating <= rating) {
+                    star.classList.add('active');
+                } else {
+                    star.classList.remove('active');
+                }
+            });
+            
+            if (rating > 0) {
+                ratingText.textContent = `${rating} 星`;
+            } else {
+                ratingText.textContent = '未评分';
+            }
+        }
+
         // 打开播放器并加载视频
         function openPlayer(video) {
             const player = document.getElementById('player');
@@ -500,13 +674,15 @@ if __name__ == '__main__':
             
             // 加载视频（支持快进）
             player.src = video.server_path;
+            player.volume = 0.25; // 设置默认音量为1/4
             playerContainer.classList.add('active');
             videoPathEl.textContent = `路径：${video.server_path}`;
             playerContainer.scrollIntoView({ behavior: 'smooth' });
             
-            // 显示带删除按钮的当前标签
-            const tagsHtml = video.tags.length 
-                ? video.tags.map(tag => `
+            // 显示带删除按钮的当前标签（排除评分标签）
+            const nonRatingTags = video.tags.filter(tag => !tag.startsWith('rating-'));
+            const tagsHtml = nonRatingTags.length 
+                ? nonRatingTags.map(tag => `
                     <span class="video-tag">
                         ${tag}
                         <span class="remove-tag" data-tag="${tag}">×</span>
@@ -523,8 +699,12 @@ if __name__ == '__main__':
                 });
             });
             
-            // 显示当前标签文本框
-            tagInput.value = video.tags.join(', ');
+            // 显示当前标签文本框（排除评分标签）
+            tagInput.value = nonRatingTags.join(', ');
+            
+            // 更新评分显示
+            const currentRating = getVideoRating(video);
+            updateRatingDisplay(currentRating);
             
             // 快进失败时重试
             player.onerror = function() {
@@ -542,6 +722,137 @@ if __name__ == '__main__':
             playerContainer.classList.remove('active');
             document.getElementById('player').pause();
         });
+
+        // 获取当前筛选后的视频列表
+        function getFilteredVideos() {
+            const searchInput = document.getElementById('search-input');
+            const searchTerm = searchInput.value.toLowerCase().trim();
+            
+            // 1. 按标签筛选
+            let filteredVideos = allVideos;
+            if (activeTag !== 'all') {
+                filteredVideos = filteredVideos.filter(video => 
+                    video.tags.includes(activeTag)
+                );
+            }
+            
+            // 2. 按关键词搜索（匹配文件名、路径或标签）
+            if (searchTerm) {
+                filteredVideos = filteredVideos.filter(video => 
+                    video.filename.toLowerCase().includes(searchTerm) || 
+                    (video.server_path && video.server_path.toLowerCase().includes(searchTerm)) ||
+                    video.tags.some(tag => tag.toLowerCase().includes(searchTerm))
+                );
+            }
+            
+            return filteredVideos;
+        }
+
+        // 随机播放视频
+        function playRandomVideo() {
+            const filteredVideos = getFilteredVideos();
+            
+            if (filteredVideos.length === 0) {
+                alert('当前没有可播放的视频！请检查筛选条件。');
+                return;
+            }
+            
+            // 随机选择一个视频
+            const randomIndex = Math.floor(Math.random() * filteredVideos.length);
+            const randomVideo = filteredVideos[randomIndex];
+            
+            // 如果当前正在播放，确保不重复播放同一个视频（除非只有一个视频）
+            let selectedVideo = randomVideo;
+            if (filteredVideos.length > 1 && currentVideoIndex !== -1) {
+                const currentVideo = allVideos[currentVideoIndex];
+                let attempts = 0;
+                // 如果随机选中的是当前正在播放的视频，重新随机选择
+                while (randomVideo.server_path === currentVideo.server_path && attempts < 10) {
+                    const newIndex = Math.floor(Math.random() * filteredVideos.length);
+                    selectedVideo = filteredVideos[newIndex];
+                    attempts++;
+                }
+            }
+            
+            // 打开播放器并播放选中的视频
+            currentVideoIndex = allVideos.findIndex(v => v.server_path === selectedVideo.server_path);
+            openPlayer(selectedVideo);
+            
+            // 自动播放
+            const player = document.getElementById('player');
+            player.play().catch(err => {
+                console.warn('自动播放失败，可能需要用户交互:', err);
+            });
+        }
+
+        // 绑定随机播放按钮事件（播放器内和页面顶部）
+        document.getElementById('random-play').addEventListener('click', playRandomVideo);
+        document.getElementById('random-play-main').addEventListener('click', playRandomVideo);
+
+        // 初始化评分功能
+        function initRating() {
+            const stars = document.querySelectorAll('.star');
+            let currentRating = 0;
+            
+            stars.forEach((star, index) => {
+                const rating = index + 1;
+                
+                // 点击事件
+                star.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    if (currentVideoIndex === -1) return;
+                    
+                    currentRating = rating;
+                    updateRatingDisplay(currentRating);
+                    setVideoRating(allVideos[currentVideoIndex].server_path, currentRating);
+                });
+                
+                // 鼠标悬停事件
+                star.addEventListener('mouseenter', () => {
+                    stars.forEach((s, i) => {
+                        if (i < rating) {
+                            s.classList.add('hover');
+                        } else {
+                            s.classList.remove('hover');
+                        }
+                    });
+                });
+            });
+            
+            // 鼠标离开评分区域时恢复
+            document.getElementById('star-rating').addEventListener('mouseleave', () => {
+                stars.forEach(star => star.classList.remove('hover'));
+            });
+        }
+
+        // 设置视频评分
+        function setVideoRating(serverPath, rating) {
+            if (currentVideoIndex === -1) return;
+            
+            const video = allVideos.find(v => v.server_path === serverPath);
+            if (!video) return;
+            
+            // 移除旧的评分标签
+            video.tags = video.tags.filter(tag => !tag.startsWith('rating-'));
+            
+            // 添加新的评分标签
+            if (rating > 0) {
+                video.tags.push(`rating-${rating}`);
+            }
+            
+            // 保存到localStorage
+            saveTagsToLocalStorage(serverPath, video.tags);
+            
+            // 刷新页面显示
+            renderAllTags();
+            renderVideos();
+            
+            // 如果播放器打开，更新显示
+            if (document.getElementById('video-player').classList.contains('active')) {
+                openPlayer(video);
+            }
+        }
+
 
         // 保存标签（持久化到localStorage）
         document.getElementById('save-tags').addEventListener('click', () => {
@@ -609,6 +920,148 @@ if __name__ == '__main__':
             const savedTagsData = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY)) || {};
             savedTagsData[serverPath] = tags;
             localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(savedTagsData));
+        }
+
+        // 加载视频1秒位置的帧作为缩略图
+        async function loadVideoThumbnail(video, imgElement) {
+            const serverPath = video.server_path;
+            
+            // 1. 先检查localStorage缓存
+            const cachedThumbnails = JSON.parse(localStorage.getItem(THUMBNAIL_STORAGE_KEY)) || {};
+            if (cachedThumbnails[serverPath]) {
+                imgElement.src = cachedThumbnails[serverPath];
+                imgElement.onload = () => {
+                    imgElement.classList.add('loaded');
+                    const loadingText = imgElement.parentElement.querySelector('.loading-text');
+                    if (loadingText) loadingText.style.display = 'none';
+                };
+                return;
+            }
+            
+            // 2. 创建隐藏的video元素来提取第一帧
+            const tempVideo = document.createElement('video');
+            tempVideo.crossOrigin = 'anonymous';
+            tempVideo.preload = 'metadata';
+            tempVideo.muted = true;
+            tempVideo.playsInline = true;
+            tempVideo.style.display = 'none';
+            document.body.appendChild(tempVideo);
+            
+            try {
+                // 加载视频元数据
+                tempVideo.src = serverPath;
+                
+                // 等待视频可以播放
+                await new Promise((resolve, reject) => {
+                    tempVideo.onloadedmetadata = resolve;
+                    tempVideo.onerror = () => {
+                        reject(new Error('无法加载视频'));
+                    };
+                    // 设置超时
+                    setTimeout(() => reject(new Error('加载超时')), 10000);
+                });
+                
+                // 跳转到1秒位置并等待seek完成
+                await new Promise((resolve, reject) => {
+                    let resolved = false;
+                    const doResolve = () => {
+                        if (!resolved) {
+                            resolved = true;
+                            resolve();
+                        }
+                    };
+                    tempVideo.onseeked = doResolve;
+                    tempVideo.onerror = () => {
+                        if (!resolved) {
+                            resolved = true;
+                            reject(new Error('无法跳转到1秒位置'));
+                        }
+                    };
+                    tempVideo.currentTime = 1.0; // 跳转到1秒位置获取封面帧
+                    // 如果seek事件未及时触发，200ms后也resolve（视频可能已经在目标时间）
+                    setTimeout(doResolve, 200);
+                });
+                
+                // 创建canvas并绘制1秒位置的帧
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                
+                // 设置canvas尺寸（缩略图尺寸）
+                canvas.width = 250;
+                canvas.height = 140;
+                
+                // 绘制视频帧到canvas
+                ctx.drawImage(tempVideo, 0, 0, canvas.width, canvas.height);
+                
+                // 转换为data URL
+                const thumbnailDataUrl = canvas.toDataURL('image/jpeg', 0.8);
+                
+                // 保存到缓存
+                cachedThumbnails[serverPath] = thumbnailDataUrl;
+                localStorage.setItem(THUMBNAIL_STORAGE_KEY, JSON.stringify(cachedThumbnails));
+                
+                // 显示缩略图
+                imgElement.src = thumbnailDataUrl;
+                imgElement.onload = () => {
+                    imgElement.classList.add('loaded');
+                    const loadingText = imgElement.parentElement.querySelector('.loading-text');
+                    if (loadingText) loadingText.style.display = 'none';
+                };
+                
+            } catch (error) {
+                console.warn(`无法为视频生成缩略图: ${serverPath}`, error);
+                // 失败时显示默认图标
+                const loadingText = imgElement.parentElement.querySelector('.loading-text');
+                if (loadingText) loadingText.textContent = '📹 视频文件';
+            } finally {
+                // 清理临时video元素
+                tempVideo.src = '';
+                tempVideo.load();
+                if (tempVideo.parentNode) {
+                    document.body.removeChild(tempVideo);
+                }
+            }
+        }
+
+        // 初始化主题
+        function initTheme() {
+            const savedTheme = localStorage.getItem(THEME_STORAGE_KEY) || 'light';
+            setTheme(savedTheme);
+            
+            // 绑定主题切换按钮事件
+            const themeToggle = document.getElementById('theme-toggle');
+            themeToggle.addEventListener('click', toggleTheme);
+        }
+
+        // 切换主题
+        function toggleTheme() {
+            const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            setTheme(newTheme);
+        }
+
+        // 设置主题
+        function setTheme(theme) {
+            if (theme === 'dark') {
+                document.documentElement.setAttribute('data-theme', 'dark');
+            } else {
+                document.documentElement.setAttribute('data-theme', 'light');
+            }
+            
+            // 更新按钮图标和文本
+            const themeIcon = document.getElementById('theme-icon');
+            const themeText = document.getElementById('theme-text');
+            
+            if (theme === 'dark') {
+                themeIcon.textContent = '☀️';
+                themeText.textContent = '白天模式';
+            } else {
+                themeIcon.textContent = '🌙';
+                themeText.textContent = '黑夜模式';
+            }
+            
+            // 保存主题偏好
+            localStorage.setItem(THEME_STORAGE_KEY, theme);
         }
     </script>
 </body>
