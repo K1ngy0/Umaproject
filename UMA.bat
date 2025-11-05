@@ -6,7 +6,7 @@ set "json_file=windows_videos.json"
 set "server_bat=start_server.bat"
 set "py_script=Umaproject.py"
 
-
+start http://localhost:8000
 REM 检查JSON文件是否存在
 if exist "%json_file%" (
     echo 发现%json_file%，准备启动服务器...
@@ -85,4 +85,5 @@ if exist "%json_file%" (
 
 REM 暂停以查看输出
 pause
+
 endlocal
